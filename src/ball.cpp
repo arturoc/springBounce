@@ -15,7 +15,7 @@ void ball::setup(float x, float y, float r) {
     velocity = ofPoint(0, 0);
     areaRadius = 25;
     dist = ofPoint(0,0);
-    //color.set(ofRandom(16), ofRandom(16), ofRandom(16));
+    color.set(ofRandom(16), ofRandom(16), ofRandom(16));
     //color.set(0, 0, 0);
 }
 
