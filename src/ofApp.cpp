@@ -6,6 +6,10 @@ void ofApp::setup(){
     
     ofSetFrameRate(60);
     
+    ballRadius = 17;
+    nbX = ofGetWidth() / (ballRadius * 2) + 1;
+    nbY = ofGetHeight() / (ballRadius * 2) + 1;
+    
     setupMatrix();
     
     dist = ofPoint(0, 0);
@@ -26,6 +30,12 @@ void ofApp::setup(){
 //    gui.add(damping.set("damping", 0.195, 0, 1));
 //    gui.add(mass.set("mass", 5, 0, 20));
     
+    receiver.setup(3333);
+    
+    kinectPoint.set(0, 0);
+    
+    image.loadImage("test.jpg");
+    image.resize(nbX, nbY);
 }
 
 //--------------------------------------------------------------
@@ -43,6 +53,30 @@ void ofApp::update(){
         }
         balls[i].update();
     }
+    
+    while(receiver.hasWaitingMessages()){
+        // get the next message
+        ofxOscMessage m;
+        receiver.getNextMessage(&m);
+        
+        // check for mouse moved message
+        if(m.getAddress() == "/kinect/x"){
+            kinectPoint.x = m.getArgAsFloat(0);
+        }
+        // check for mouse button message
+        else if(m.getAddress() == "/kinect/y"){
+            kinectPoint.y = m.getArgAsFloat(0);
+        }
+    }
+    
+    for (int i = 0; i < balls.size(); i++) {
+        float x = kinectPoint.x * ofGetWidth();
+        float y = kinectPoint.y * ofGetHeight();
+        
+        if (balls[i].inArea(x, y)) {
+            balls[i].position.set(x, y);
+        }
+    }
 }
 
 //--------------------------------------------------------------
@@ -57,22 +91,33 @@ void ofApp::draw(){
     if (showGui) {
         gui.draw();
     }
+    
+    // TEST GETCOLOR
+//    ofImage img;
+//    img.allocate(nbX, nbY, OF_IMAGE_COLOR);
+//    for (int y = 0; y < nbY; y++) {
+//        for (int x = 0; x < nbX; x++) {
+//            img.setColor(x, y, image.getColor(x, y));
+//        }
+//    }
+//    img.resize(1024, 768);
+//    img.draw(0, 0);
+
 }
 
 void ofApp::setupMatrix() {
-    float ballRadius = 17;
-    int nbX = ofGetWidth() / (ballRadius * 2) + 1;
-    int nbY = ofGetHeight() / (ballRadius * 2) + 1;
-    
     if (balls.size() != 0) {
         balls.clear();
     }
-    
-    for (int x = 0; x < nbX; x++) {
-        for (int y = 0; y < nbY; y++) {
+    for (int y = 0; y < nbY; y++) {
+        for (int x = 0; x < nbX; x++) {
             balls.push_back(ball());
             //balls.back().setup((x * ballRadius * 2) + ballRadius, (y * ballRadius * 2) + ballRadius, ballRadius);
-            balls.back().setup(x * ballRadius * 2, y * ballRadius * 2, ballRadius);
+            //            balls.back().setup(x * ballRadius * 2, y * ballRadius * 2, ballRadius, ofColor(ofRandom(16), ofRandom(16), ofRandom(16)));
+            float posx = x * ballRadius * 2;
+            float posy = y * ballRadius * 2;
+            ofColor c = image.getColor(x, y);
+            balls.back().setup(posx , posy, ballRadius, c);
         }
     }
 }

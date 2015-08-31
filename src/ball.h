@@ -14,7 +14,7 @@
 class ball {
 public:
     
-    void setup(float x, float y, float r);
+    void setup(float x, float y, float r, ofColor col);
     void update();
     void draw();
     
