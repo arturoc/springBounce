@@ -27,7 +27,7 @@ void ball::update() {
 void ball::draw() {
     
     ofPushMatrix();
-    ofColor c = ofColor(ofMap(dist.x + dist.y, -10, 10, 40, 200, true));
+    ofColor c = ofColor(ofMap(dist.x + dist.y, -10, 10, 30, 100, true));
     
     // formula for color SCREEN blend mode
     ofSetColor(ofColor(255) - (((ofColor(255) - c)*(ofColor(255) - color))/ofColor(255)));

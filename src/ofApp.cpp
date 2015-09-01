@@ -6,9 +6,12 @@ void ofApp::setup(){
     
     ofSetFrameRate(60);
     
-    ballRadius = 17;
+    ballRadius = 16;
     nbX = ofGetWidth() / (ballRadius * 2) + 1;
     nbY = ofGetHeight() / (ballRadius * 2) + 1;
+    
+    image.loadImage("sign.png");
+    image.resize(nbX, nbY);
     
     setupMatrix();
     
@@ -33,9 +36,7 @@ void ofApp::setup(){
     receiver.setup(3333);
     
     kinectPoint.set(0, 0);
-    
-    image.loadImage("test.jpg");
-    image.resize(nbX, nbY);
+
 }
 
 //--------------------------------------------------------------
@@ -91,24 +92,15 @@ void ofApp::draw(){
     if (showGui) {
         gui.draw();
     }
-    
-    // TEST GETCOLOR
-//    ofImage img;
-//    img.allocate(nbX, nbY, OF_IMAGE_COLOR);
-//    for (int y = 0; y < nbY; y++) {
-//        for (int x = 0; x < nbX; x++) {
-//            img.setColor(x, y, image.getColor(x, y));
-//        }
-//    }
-//    img.resize(1024, 768);
-//    img.draw(0, 0);
-
 }
+
+//--------------------------------------------------------------
 
 void ofApp::setupMatrix() {
     if (balls.size() != 0) {
         balls.clear();
     }
+
     for (int y = 0; y < nbY; y++) {
         for (int x = 0; x < nbX; x++) {
             balls.push_back(ball());
