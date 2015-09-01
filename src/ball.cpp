@@ -16,8 +16,6 @@ void ball::setup(float x, float y, float r, ofColor col) {
     areaRadius = 25;
     dist = ofPoint(0,0);
     color.set(col);
-    //color.set(ofRandom(16), ofRandom(16), ofRandom(16));
-    //color.set(0, 0, 0);
 }
 
 void ball::update() {
@@ -32,7 +30,6 @@ void ball::draw() {
     // formula for color SCREEN blend mode
     ofSetColor(ofColor(255) - (((ofColor(255) - c)*(ofColor(255) - color))/ofColor(255)));
     
-    //ofSetColor(color + c);
     ofCircle(position, radius);
     ofPopMatrix();
 }

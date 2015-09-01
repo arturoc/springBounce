@@ -28,10 +28,14 @@ void ofApp::setup(){
     gui.add(friction.set("friction", 0.98, 0, 1)); // 0.98
     gui.add(damping.set("damping", 0.125, 0, 1)); // 0.195
     gui.add(mass.set("mass", 5, 0, 20)); // 5
-    
+    gui.add(bOsc.set("OSC", false));
+    gui.add(bKinect.set("Kinect", false));
+
     receiver.setup(3333);
     
     kinectPoint.set(0, 0);
+    
+    gui.loadFromFile("settings.xml");
     
 }
 
