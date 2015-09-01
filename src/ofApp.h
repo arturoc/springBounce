@@ -35,6 +35,9 @@ class ofApp : public ofBaseApp{
     ofParameter<float> stiffness;
     ofParameter<float> friction;
     
+    ofParameter<bool> bOsc;
+    ofParameter<bool> bKinect;
+    
     bool showGui;
     
     ofxOscReceiver receiver;
