@@ -38,7 +38,8 @@ class ofApp : public ofBaseApp{
     ofParameter<bool> bOsc;
     ofParameter<bool> bKinect;
     
-    bool showGui;
+    bool bBlobDetected;
+    bool bShowGui;
     
     ofxOscReceiver receiver;
     
@@ -49,6 +50,5 @@ class ofApp : public ofBaseApp{
     int nbX;
     int nbY;
     float ballRadius;
-
 };
 

@@ -6,20 +6,25 @@ void ofApp::setup(){
     
     ofSetFrameRate(60);
     
-    ballRadius = 10;
+    ballRadius = 12;
     nbX = ofGetWidth() / (ballRadius * 2) + 1;
     nbY = ofGetHeight() / (ballRadius * 2) + 1;
+    
+    // limit distance to a circle to fire interaction
+    limit = 0.01;
     
     image.loadImage("pattern.png");
     image.resize(nbX, nbY);
     
     setupMatrix();
     
+    // Physics
     dist = ofPoint(0, 0);
     attraction = ofPoint(0, 0);
     
-    limit = 0.01;
-    showGui = false;
+    bShowGui = false;
+    
+    // GUI
     
     gui.setup();
     gui.setName("PROPERTIES");
@@ -30,13 +35,14 @@ void ofApp::setup(){
     gui.add(mass.set("mass", 5, 0, 20)); // 5
     gui.add(bOsc.set("OSC", false));
     gui.add(bKinect.set("Kinect", false));
-
-    receiver.setup(3333);
-    
-    kinectPoint.set(0, 0);
     
     gui.loadFromFile("settings.xml");
     
+    // OSC
+    receiver.setup(3333);
+    
+    // KINECT
+    kinectPoint.set(-10, -10);
 }
 
 //--------------------------------------------------------------
@@ -55,31 +61,44 @@ void ofApp::update(){
         balls[i].update();
     }
     
+    // If OSC Enabled
     if (bOsc) {
         while(receiver.hasWaitingMessages()){
             // get the next message
             ofxOscMessage m;
             receiver.getNextMessage(&m);
             
-            // check for mouse moved message
+            // check for mouse x moved message
             if(m.getAddress() == "/kinect/x"){
                 kinectPoint.x = m.getArgAsFloat(0);
             }
-            // check for mouse button message
+            // check for mouse y moved message
             else if(m.getAddress() == "/kinect/y"){
                 kinectPoint.y = m.getArgAsFloat(0);
+            }
+            // check if blob is detected by kinect
+            else if(m.getAddress() == "/kinect/detected"){
+                bBlobDetected = m.getArgAsInt32(0);
             }
         }
     }
     
+    // If Kinect Enabled
     if (bKinect) {
-        for (int i = 0; i < balls.size(); i++) {
-            float x = kinectPoint.x * ofGetWidth();
-            float y = kinectPoint.y * ofGetHeight();
+        if (bBlobDetected) {
             
-            if (balls[i].inArea(x, y)) {
-                balls[i].position.set(x, y);
+            for (int i = 0; i < balls.size(); i++) {
+                float x = kinectPoint.x * ofGetWidth();
+                float y = kinectPoint.y * ofGetHeight();
+                
+                if (balls[i].inArea(x, y)) {
+                    balls[i].position.set(x, y);
+                }
             }
+        }
+        else
+        {
+            kinectPoint.set(-10, -10);
         }
     }
 }
@@ -88,12 +107,12 @@ void ofApp::update(){
 void ofApp::draw(){
     
     ofBackground(0);
-    
+
     for (int i = 0; i < balls.size(); i++) {
         balls[i].draw();
     }
     
-    if (showGui) {
+    if (bShowGui) {
         gui.draw();
     }
 }
@@ -119,7 +138,7 @@ void ofApp::setupMatrix() {
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     if (key == OF_KEY_TAB) {
-        showGui = !showGui;
+        bShowGui = !bShowGui;
     }
     if (key == ' ') {
         ofImage scr;
