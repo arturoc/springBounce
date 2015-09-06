@@ -22,13 +22,13 @@ void ball::update() {
     dist = pin - position;
 }
 
-void ball::draw() {
+void ball::draw(float contrast) {
     
     ofPushMatrix();
     ofColor c = ofColor(ofMap(dist.x + dist.y, -10, 10, 20, 220, true));
     
     // formula for color SCREEN blend mode
-    ofSetColor(ofColor(255) - (((ofColor(255) - c)*(ofColor(255) - color))/ofColor(255)));
+    ofSetColor(ofColor(255) - (((ofColor(255) - c)*(ofColor(255) - color))/ofColor(contrast)));
     
     ofCircle(position, radius);
     ofPopMatrix();

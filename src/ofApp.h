@@ -38,6 +38,11 @@ class ofApp : public ofBaseApp{
     ofParameter<bool> bOsc;
     ofParameter<bool> bKinect;
     
+    ofParameter<float> contrast;
+    
+    ofParameter<float> twinkle;
+    ofParameter<bool> bTwinkle;
+    
     bool bBlobDetected;
     bool bShowGui;
     
@@ -50,5 +55,6 @@ class ofApp : public ofBaseApp{
     int nbX;
     int nbY;
     float ballRadius;
+    
 };
 
