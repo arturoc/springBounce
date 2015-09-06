@@ -1,0 +1,11 @@
+<PROPERTIES>
+	<stiffness>0.265</stiffness>
+	<friction>0.98</friction>
+	<damping>0.125</damping>
+	<mass>5</mass>
+	<OSC>1</OSC>
+	<Kinect>1</Kinect>
+<PROPERTIES/>
+<Receive_OSC>0</Receive_OSC>
+	<Receive_Kinect_info>0</Receive_Kinect_info>
+</PROPERTIES>
