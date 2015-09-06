@@ -8,28 +8,28 @@
 
 #include "ball.h"
 
-void ball::setup(float x, float y, float r) {
+void ball::setup(float x, float y, float r, ofColor col) {
     pin = ofPoint(x, y);
     position = pin;
     radius = r;
     velocity = ofPoint(0, 0);
     areaRadius = 25;
     dist = ofPoint(0,0);
-    color.set(ofRandom(16), ofRandom(16), ofRandom(16));
-    //color.set(0, 0, 0);
+    color.set(col);
 }
 
 void ball::update() {
     dist = pin - position;
 }
 
-void ball::draw() {
+void ball::draw(float contrast) {
     
     ofPushMatrix();
-    ofColor c = ofColor(ofMap(dist.x + dist.y, -10, 10, 40, 200, true));
+    ofColor c = ofColor(ofMap(dist.x + dist.y, -10, 10, 20, 220, true));
+    
     // formula for color SCREEN blend mode
-    ofSetColor(ofColor(255) - (((ofColor(255) - c)*(ofColor(255) - color))/ofColor(255)));
-    //ofSetColor(color + c);
+    ofSetColor(ofColor(255) - (((ofColor(255) - c)*(ofColor(255) - color))/ofColor(contrast)));
+    
     ofCircle(position, radius);
     ofPopMatrix();
 }

@@ -14,9 +14,9 @@
 class ball {
 public:
     
-    void setup(float x, float y, float r);
+    void setup(float x, float y, float r, ofColor col);
     void update();
-    void draw();
+    void draw(float contrast);
     
     bool inArea(float x, float y);
     
@@ -32,7 +32,6 @@ public:
     ofPoint dist;
    
     ofColor color;
-    
 };
 
 

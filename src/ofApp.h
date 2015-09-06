@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ball.h"
 #include "ofxGui.h"
+#include "ofxOsc.h"
 
 class ofApp : public ofBaseApp{
 
@@ -34,7 +35,26 @@ class ofApp : public ofBaseApp{
     ofParameter<float> stiffness;
     ofParameter<float> friction;
     
-    bool showGui;
-
+    ofParameter<bool> bOsc;
+    ofParameter<bool> bKinect;
+    
+    ofParameter<float> contrast;
+    
+    ofParameter<float> twinkle;
+    ofParameter<bool> bTwinkle;
+    
+    bool bBlobDetected;
+    bool bShowGui;
+    
+    ofxOscReceiver receiver;
+    
+    ofPoint kinectPoint;
+    
+    ofImage image;
+    
+    int nbX;
+    int nbY;
+    float ballRadius;
+    
 };
 
