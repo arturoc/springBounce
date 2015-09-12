@@ -6,105 +6,60 @@ void ofApp::setup(){
     
     ofSetFrameRate(60);
     
-    ballRadius = 12;
-    nbX = ofGetWidth() / (ballRadius * 2) + 1;
-    nbY = ofGetHeight() / (ballRadius * 2) + 1;
+    float shapeRadius = 20;
+    float nbX = ofGetWidth() / (shapeRadius * 2) + 1;
+    float nbY = ofGetHeight() / (shapeRadius * 2) + 1;
     
     // limit distance to circle from pin center to consider it still
     limit = 0.05;
     
-    image.loadImage("pattern.png");
-    image.resize(nbX, nbY);
+    // Setup shapes
+    if (shapes.size() != 0) {
+        shapes.clear();
+    }
     
-    setupMatrix();
+    for (int y = 0; y < nbY; y++) {
+        for (int x = 0; x < nbX; x++) {
+            shapes.push_back(shape());
+            float posx = x * shapeRadius * 2;
+            float posy = y * shapeRadius * 2;
+            //ofColor c = image.getColor(x, y);
+            ofColor c = ofColor(ofRandom(130, 180));
+            shapes.back().setup(posx , posy, shapeRadius, c);
+        }
+    }
     
     // Physics
     dist = ofPoint(0, 0);
     attraction = ofPoint(0, 0);
     
-    bShowGui = false;
-    
-    // GUI
-    gui.setup();
-    gui.setName("PROPERTIES");
-    
-    gui.add(stiffness.set("stiffness", 0.265, 0, 1)); // 0.345
-    gui.add(friction.set("friction", 0.98, 0, 1)); // 0.98
-    gui.add(damping.set("damping", 0.125, 0, 1)); // 0.195
-    gui.add(mass.set("mass", 5, 0, 20)); // 5
-    gui.add(bOsc.set("Receive OSC", false));
-    gui.add(bKinect.set("Receive Kinect info", false));
-    gui.add(contrast.set("Contrast", 255, 1, 255));
-    gui.add(bTwinkle.set("Twinkle", false));
-    gui.add(twinkle.set("Twinkle", 0, 0, 10));
-    gui.loadFromFile("settings.xml");
-    
-    // OSC
-    receiver.setup(3333);
-    
-    // KINECT
-    kinectPoint.set(-10, -10);
+    vboMesh.clear();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     
-    for (int i = 0; i < balls.size(); i++) {
+    vboMesh.clear();
+    
+    for (int i = 0; i < shapes.size(); i++) {
         
-        dist = balls[i].pin - balls[i].position;
-        attraction = ((dist * stiffness) - (damping * dist))/mass;
-        balls[i].velocity = (balls[i].velocity + attraction) * friction;
-        balls[i].position = balls[i].position + balls[i].velocity;
-        
+        // Compute shape position
+        dist = shapes[i].pin - shapes[i].position;
+        attraction = ((dist * 0.265) - (0.125 * dist))/5;
+        shapes[i].velocity = (shapes[i].velocity + attraction) * 0.98;
+        shapes[i].position = shapes[i].position + shapes[i].velocity;
         
         if (dist.length() < limit) {
-            if (bTwinkle) {
-                balls[i].position = balls[i].pin + ofPoint(ofRandom(twinkle), ofRandom(twinkle));
-            }
-            else {
-                balls[i].position = balls[i].pin;
-            }
+            shapes[i].position = shapes[i].pin;
         }
-        balls[i].update();
-    }
-    
-    // If OSC Enabled
-    if (bOsc) {
-        while(receiver.hasWaitingMessages()){
-            // get the next message
-            ofxOscMessage m;
-            receiver.getNextMessage(&m);
-            
-            // check for mouse x moved message
-            if(m.getAddress() == "/kinect/x"){
-                kinectPoint.x = m.getArgAsFloat(0);
-            }
-            // check for mouse y moved message
-            else if(m.getAddress() == "/kinect/y"){
-                kinectPoint.y = m.getArgAsFloat(0);
-            }
-            // check if blob is detected by kinect
-            else if(m.getAddress() == "/kinect/detected"){
-                bBlobDetected = m.getArgAsInt32(0);
-            }
-        }
-    }
-    
-    // If Kinect Enabled
-    if (bKinect) {
-        if (bBlobDetected) {
-            for (int i = 0; i < balls.size(); i++) {
-                float x = kinectPoint.x * ofGetWidth();
-                float y = kinectPoint.y * ofGetHeight();
-                
-                if (balls[i].inArea(x, y)) {
-                    balls[i].position.set(x, y);
-                }
-            }
-        }
-        else
-        {
-            kinectPoint.set(-10, -10);
+        
+        // Update shape with new values
+        shapes[i].update();
+        
+        // Add shape to vboMesh
+        for (int j = 0; j < shapes[i].getVertices().size(); j++) {
+            vboMesh.addVertex(shapes[i].getVertex(j) + shapes[i].position);
+            vboMesh.addColor(shapes[i].getColor(j));
         }
     }
 }
@@ -114,46 +69,15 @@ void ofApp::draw(){
     
     ofBackground(0);
     
-    for (int i = 0; i < balls.size(); i++) {
-        balls[i].draw(contrast);
-    }
+    vboMesh.draw();
     
-    if (bShowGui) {
-        gui.draw();
-    }
-}
-
-//--------------------------------------------------------------
-
-void ofApp::setupMatrix() {
-    if (balls.size() != 0) {
-        balls.clear();
-    }
-    
-    for (int y = 0; y < nbY; y++) {
-        for (int x = 0; x < nbX; x++) {
-            balls.push_back(ball());
-            float posx = x * ballRadius * 2;
-            float posy = y * ballRadius * 2;
-            ofColor c = image.getColor(x, y);
-            balls.back().setup(posx , posy, ballRadius, c);
-        }
-    }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if (key == OF_KEY_TAB) {
-        bShowGui = !bShowGui;
-    }
-    if (key == ' ') {
-        ofImage scr;
-        scr.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
-        scr.saveImage("screenshot.png");
-    }
-    if (key == 'f') {
-        ofToggleFullscreen();
-        setupMatrix();
+    
+    if (key == 't') {
+        shapes[210].position += ofPoint(ofRandom(50), ofRandom(50));
     }
 }
 
@@ -169,11 +93,8 @@ void ofApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-    for (int i = 0; i < balls.size(); i++) {
-        if (balls[i].inArea(x, y)) {
-            balls[i].position.set(x, y);
-        }
-    }
+    
+    
 }
 
 //--------------------------------------------------------------

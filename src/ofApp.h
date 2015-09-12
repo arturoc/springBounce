@@ -1,9 +1,12 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ball.h"
-#include "ofxGui.h"
-#include "ofxOsc.h"
+
+//#include "ball.h"
+//#include "ofxGui.h"
+//#include "ofxOsc.h"
+
+#include "shape.h"
 
 class ofApp : public ofBaseApp{
 
@@ -19,42 +22,15 @@ class ofApp : public ofBaseApp{
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
 		
-    void setupMatrix();
     
     ofPoint dist;
     ofPoint attraction;
     
-    vector<ball> balls;
+    vector<shape> shapes;
+    
+    ofVboMesh vboMesh;
     
     float limit;
-    
-    ofxPanel gui;
-    
-    ofParameter<float> mass;
-    ofParameter<float> damping;
-    ofParameter<float> stiffness;
-    ofParameter<float> friction;
-    
-    ofParameter<bool> bOsc;
-    ofParameter<bool> bKinect;
-    
-    ofParameter<float> contrast;
-    
-    ofParameter<float> twinkle;
-    ofParameter<bool> bTwinkle;
-    
-    bool bBlobDetected;
-    bool bShowGui;
-    
-    ofxOscReceiver receiver;
-    
-    ofPoint kinectPoint;
-    
-    ofImage image;
-    
-    int nbX;
-    int nbY;
-    float ballRadius;
-    
+        
 };
 
