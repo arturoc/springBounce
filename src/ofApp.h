@@ -26,11 +26,11 @@ class ofApp : public ofBaseApp{
     ofPoint dist;
     ofPoint attraction;
     
-    vector<shape> shapes;
+    std::vector<shape> shapes;
     
     ofVboMesh vboMesh;
-    
-    float limit;
+    ofImage circleTex;
+    ofShader shader;
         
 };
 

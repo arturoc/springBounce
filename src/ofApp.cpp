@@ -3,74 +3,51 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	ofDisableArbTex();
+	circleTex.load("circle.png");
     
-    ofSetFrameRate(60);
-    
-    float shapeRadius = 17;
-    float nbX = ofGetWidth() / (shapeRadius * 2) + 1;
-    float nbY = ofGetHeight() / (shapeRadius * 2) + 1;
-    
-    // limit distance to circle from pin center to consider it still
-    limit = 0.05;
-    
-    // Setup shapes
-    if (shapes.size() != 0) {
-        shapes.clear();
-    }
-    
+    float radius = 4;
+    float nbX = ofGetWidth() / (radius * 2) + 1;
+    float nbY = ofGetHeight() / (radius * 2) + 1;
+
+    vboMesh.setUsage(GL_DYNAMIC_DRAW);
+    vboMesh.setMode(OF_PRIMITIVE_POINTS);
     for (int y = 0; y < nbY; y++) {
         for (int x = 0; x < nbX; x++) {
-            shapes.push_back(shape());
-            float posx = x * shapeRadius * 2;
-            float posy = y * shapeRadius * 2;
+            shapes.emplace_back();
+            float posx = x * radius * 2;
+            float posy = y * radius * 2;
             //ofColor c = image.getColor(x, y);
             ofColor c = ofColor(ofRandom(130, 180));
-            shapes.back().setup(posx , posy, shapeRadius, c);
+            shapes.back().setup(posx , posy, radius, c);
+			vboMesh.addVertex(shapes.back().pin);
+			vboMesh.addColor(c);
         }
     }
-    
-    // Physics
-    dist = ofPoint(0, 0);
-    attraction = ofPoint(0, 0);
-    
-    vboMesh.clear();
+
+    ofSetBackgroundColor(0);
+    glPointSize(radius*2);
+
+    shader.load("vert.glsl","frag.glsl");
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    
-    vboMesh.clear();
-    
-    for (int i = 0; i < shapes.size(); i++) {
-        
-        // Compute shape position
-        dist = shapes[i].pin - shapes[i].position;
-        attraction = ((dist * 0.265) - (0.125 * dist))/5;
-        shapes[i].velocity = (shapes[i].velocity + attraction) * 0.98;
-        shapes[i].position = shapes[i].position + shapes[i].velocity;
-        
-        if (dist.length() < limit) {
-            shapes[i].position = shapes[i].pin;
-        }
-        
-        // Update shape with new values
+    for (int i=0;i<shapes.size();i++) {
         shapes[i].update();
-        
-        // Add shape to vboMesh
-        for (int j = 0; j < shapes[i].getVertices().size(); j++) {
-            vboMesh.addVertex(shapes[i].getVertex(j) + shapes[i].position);
-            vboMesh.addColor(shapes[i].getColor(j));
-        }
+        vboMesh.getVertices()[i] = shapes[i].position;
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    
-    ofBackground(0);
-    
+	shader.begin();
+	circleTex.bind();
     vboMesh.draw();
+    circleTex.unbind();
+    shader.end();
     
+    ofDrawBitmapString(ofGetFrameRate(),20,20);
 }
 
 //--------------------------------------------------------------
@@ -90,7 +67,7 @@ void ofApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-    for (int i = 0; i < shapes.size(); i++) {
+    for (int i=0;i<shapes.size();i++) {
         if (shapes[i].inArea(x, y)) {
             shapes[i].position.set(x, y);
         }

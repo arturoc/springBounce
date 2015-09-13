@@ -24,26 +24,7 @@ void shape::setup(float x, float y, float r, ofColor c) {
     color = c;
     dist = ofPoint(0, 0);
     areaRadius = 25;
-    
-}
-
-void shape::update() {
-    
-    //dist = pin - position;
-    
-    poly.clear();
-    this->clear();
-    
-    poly.arc(0, 0, radius, radius, 0, 360);
-    
-    for (int i = 0; i < poly.getVertices().size() - 1; i++) {
-        this->addVertex(poly[i]);
-        this->addColor(color);
-        this->addVertex(poly[i + 1]);
-        this->addColor(color);
-        this->addVertex(ofPoint(0, 0));
-        this->addColor(color);
-    }
+    pinned = true;
 }
 
 bool shape::inArea(float x, float y) {
