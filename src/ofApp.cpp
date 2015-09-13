@@ -6,7 +6,7 @@ void ofApp::setup(){
     
     ofSetFrameRate(60);
     
-    float shapeRadius = 20;
+    float shapeRadius = 17;
     float nbX = ofGetWidth() / (shapeRadius * 2) + 1;
     float nbY = ofGetHeight() / (shapeRadius * 2) + 1;
     
@@ -75,10 +75,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    
-    if (key == 't') {
-        shapes[210].position += ofPoint(ofRandom(50), ofRandom(50));
-    }
+
 }
 
 //--------------------------------------------------------------
@@ -93,8 +90,11 @@ void ofApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-    
-    
+    for (int i = 0; i < shapes.size(); i++) {
+        if (shapes[i].inArea(x, y)) {
+            shapes[i].position.set(x, y);
+        }
+    }
 }
 
 //--------------------------------------------------------------

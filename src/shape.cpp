@@ -47,9 +47,6 @@ void shape::update() {
 }
 
 bool shape::inArea(float x, float y) {
-    
-    //return poly.inside(x, y);
-    
     if (ofDist(x, y, position.x, position.y) < areaRadius) {
         return true;
     }
