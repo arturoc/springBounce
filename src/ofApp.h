@@ -2,10 +2,6 @@
 
 #include "ofMain.h"
 
-//#include "ball.h"
-//#include "ofxGui.h"
-//#include "ofxOsc.h"
-
 #include "shape.h"
 
 class ofApp : public ofBaseApp{

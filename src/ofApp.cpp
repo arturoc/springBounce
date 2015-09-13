@@ -5,8 +5,9 @@
 void ofApp::setup(){
     
     ofSetFrameRate(60);
+    //ofSetVerticalSync(false);
     
-    float shapeRadius = 17;
+    float shapeRadius = 12;
     float nbX = ofGetWidth() / (shapeRadius * 2) + 1;
     float nbY = ofGetHeight() / (shapeRadius * 2) + 1;
     
@@ -33,13 +34,20 @@ void ofApp::setup(){
     dist = ofPoint(0, 0);
     attraction = ofPoint(0, 0);
     
-    vboMesh.clear();
+    //vboMesh.clear();
+    
+    for (int i = 0; i < shapes.size(); i++) {
+    for (int j = 0; j < shapes[i].getVertices().size(); j++) {
+        vboMesh.addColor(shapes[i].getColor(j));
+    }
+    }
+
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     
-    vboMesh.clear();
+    vboMesh.getVertices().clear();
     
     for (int i = 0; i < shapes.size(); i++) {
         
@@ -59,7 +67,6 @@ void ofApp::update(){
         // Add shape to vboMesh
         for (int j = 0; j < shapes[i].getVertices().size(); j++) {
             vboMesh.addVertex(shapes[i].getVertex(j) + shapes[i].position);
-            vboMesh.addColor(shapes[i].getColor(j));
         }
     }
 }
